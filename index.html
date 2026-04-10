@@ -380,19 +380,13 @@
         </div>
 
         <div class="input-group">
-    <label>Jam Ke</label>
-    <div class="checkbox-grid">
-        <script>
-            for(let i=1; i<=10; i++){
-                // Kita tambahkan teks "Jam ke " di depan angka ${i}
-                document.write(`
-                    <div class="cb-item">
-                        <input type="checkbox" name="waktu" value="Jam ke ${i}" id="j${i}">
-                        <label for="j${i}">Jam ke ${i}</label>
-                    </div>
-                `);
-            }
-        </script>
+            <label>Jam Ke</label>
+            <div class="checkbox-grid">
+                <script>
+                    for(let i=1; i<=10; i++){
+                        document.write(`<div class="cb-item"><input type="checkbox" name="waktu" value="${i}" id="j${i}"><label for="j${i}">${i}</label></div>`);
+                    }
+                </script>
     </div>
 </div>
 
