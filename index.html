@@ -539,7 +539,7 @@
         document.getElementById('loading-siswa').style.display = 'inline-block';
         document.getElementById('student-list').innerHTML = '';
 
-        fetch(SCRIPT_URL + "?action=getSiswa&kelas=" + kls)
+        fetch(SCRIPT_URL + "?action=getSiswa&kelas=" + encodeURIComponent(kls))
         .then(res => res.json())
         .then(siswa => {
             document.getElementById('loading-siswa').style.display = 'none';
