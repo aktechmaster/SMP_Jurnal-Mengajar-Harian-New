@@ -392,11 +392,34 @@
 
         <div class="input-group">
     <label>Bukti KBM (Photo)</label>
-    <div class="input-wrapper">
-        <i class="fa-solid fa-camera"></i>
-        <input type="file" id="buktiKBM" class="form-control" accept="image/*" capture="environment" required style="padding-top:12px">
+    
+    <!-- Input Tersembunyi Khusus Kamera -->
+    <input type="file" id="inputKamera" accept="image/*" capture="environment" style="display: none;">
+    
+    <!-- Input Tersembunyi Khusus Galeri -->
+    <input type="file" id="inputGaleri" accept="image/*" style="display: none;">
+    
+    <!-- Input Utama (untuk validasi form required) -->
+    <input type="file" id="buktiKBM" name="buktiKBM" required style="opacity: 0; position: absolute; width: 1px; height: 1px;">
+
+    <!-- Dua Tombol Pilihan -->
+    <div style="display: flex; gap: 10px; margin-top: 5px;">
+        <button type="button" onclick="document.getElementById('inputKamera').click()" style="flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; color: #334155;">
+            <i class="fa-solid fa-camera" style="color: #0284c7;"></i> Kamera
+        </button>
+        
+        <button type="button" onclick="document.getElementById('inputGaleri').click()" style="flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; background: #f8fafc; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500; color: #334155;">
+            <i class="fa-solid fa-image" style="color: #16a34a;"></i> Galeri
+        </button>
     </div>
+
+    <!-- Teks Penanda File Terpilih -->
+    <small id="namaFilePilihan" style="color: #0284c7; font-size: 0.8rem; margin-top: 6px; display: block; font-weight: 500;">
+        *Belum ada foto dipilih
+    </small>
 </div>
+
+        
         <div class="input-group">
             <label>Catatan</label>
             <input type="text" id="catatan" class="form-control" placeholder="-">
@@ -709,6 +732,35 @@
     emailInput.addEventListener('input', function() {
         localStorage.setItem('emailGuruTersimpan', this.value);
     });
+});
+
+    const inputKamera = document.getElementById('inputKamera');
+const inputGaleri = document.getElementById('inputGaleri');
+const buktiKBM = document.getElementById('buktiKBM');
+const namaFilePilihan = document.getElementById('namaFilePilihan');
+
+// Fungsi untuk menangani file yang dipilih
+function tanganiFile(inputSumber) {
+    if (inputSumber.files && inputSumber.files[0]) {
+        // Salin file ke input utama (#buktiKBM)
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(inputSumber.files[0]);
+        buktiKBM.files = dataTransfer.files;
+
+        // Tampilkan nama file di layar
+        namaFilePilihan.innerText = '✔ Foto berhasil dipilih: ' + inputSumber.files[0].name;
+        namaFilePilihan.style.color = '#16a34a'; // Warna hijau
+    }
+}
+
+// Jalankan fungsi saat foto diambil via Kamera
+inputKamera.addEventListener('change', function() {
+    tanganiFile(this);
+});
+
+// Jalankan fungsi saat foto dipilih dari Galeri
+inputGaleri.addEventListener('change', function() {
+    tanganiFile(this);
 });
 </script>
 
