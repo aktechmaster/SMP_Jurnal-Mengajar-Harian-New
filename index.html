@@ -647,6 +647,54 @@
             btn.disabled = false;
         });
     }
+
+    document.getElementById('buktiKBM').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = function(event) {
+        const img = new Image();
+        img.src = event.target.result;
+
+        img.onload = function() {
+            // 1. Tentukan ukuran maksimal lebar/tinggi foto (misal: 1024px)
+            const MAX_WIDTH = 1024;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > MAX_WIDTH) {
+                height = Math.round((height * MAX_WIDTH) / width);
+                width = MAX_WIDTH;
+            }
+
+            // 2. Gambar ulang foto di elemen Canvas internal
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // 3. Konversi ke JPEG dengan kualitas 70% (0.7)
+            canvas.toBlob(function(blob) {
+                // Buat file baru hasil kompresi
+                const compressedFile = new File([blob], file.name, {
+                    type: 'image/jpeg',
+                    lastModified: Date.now()
+                });
+
+                // 4. Timpa file asli di dalam tag <input> dengan file yang sudah kecil
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(compressedFile);
+                document.getElementById('buktiKBM').files = dataTransfer.files;
+
+                console.log(`Foto berhasil dikompres! Ukuran baru: ${(blob.size / 1024).toFixed(1)} KB`);
+            }, 'image/jpeg', 0.7); // 0.7 = Kualitas 70%
+        };
+    };
+});
 </script>
 
 </body>
