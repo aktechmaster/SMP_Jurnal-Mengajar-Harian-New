@@ -451,7 +451,6 @@
 
 <script>
     // --- MASUKKAN URL GOOGLE SCRIPT ANDA DI SINI ---
-    // Pastikan URL ini adalah hasil DEPLOY TERBARU (New Version)
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG4ZKJCOxEmjU12FaVpQ6szU9xvXJnAj4tNy4lpSlsq6FbMwo8doFme-UG-38V8x6D/exec"; 
 
     // 1. Load Data Awal
@@ -465,7 +464,6 @@
         })
         .catch(err => {
             console.log(err);
-            // alert("Gagal mengambil data. Cek koneksi.");
         });
     };
 
@@ -480,14 +478,13 @@
         });
     }
 
-    // --- EVENT LISTENER: CEK KUOTA (MODIFIKASI UI KEREN) ---
+    // --- EVENT LISTENER: CEK KUOTA ---
     document.getElementById('guru').addEventListener('change', function() {
         var namaGuru = this.value;
         var btn = document.getElementById('btnKirim');
         
         if (!namaGuru) return;
 
-        // Tampilan Loading di Tombol
         btn.disabled = true;
         btn.innerHTML = '<span class="loader"></span> MEMERIKSA JATAH...';
         btn.style.background = "#64748b"; 
@@ -498,12 +495,10 @@
             
             if (hasil.status === "SUKSES") {
                 if (hasil.bolehInput) {
-                    // --- JIKA BOLEH INPUT (Toast Kecil di Pojok) ---
                     btn.disabled = false;
                     btn.innerHTML = `UPLOAD DATA (Sisa: ${hasil.sisa}) <i class="fa-solid fa-rocket"></i>`;
                     btn.style.background = ""; 
                     
-                    // Opsional: Notifikasi kecil bahwa data siap (biar user tau sistem merespon)
                     const Toast = Swal.mixin({
                         toast: true,
                         position: 'top-end',
@@ -517,7 +512,6 @@
                     });
 
                 } else {
-                    // --- JIKA JATAH HABIS (Popup Merah Keren) ---
                     btn.disabled = true;
                     btn.innerHTML = '⛔ JATAH HARI INI HABIS';
                     btn.style.background = "#ef4444"; 
@@ -533,7 +527,6 @@
                 }
 
             } else {
-                // Data Tidak Ditemukan
                 btn.disabled = true;
                 btn.innerHTML = '⚠️ DATA TIDAK DITEMUKAN';
                 Swal.fire({
@@ -599,7 +592,6 @@
             mapel: document.getElementById('mapel').value,
             kelas: document.getElementById('kelas').value,
             pertemuan: document.getElementById('pertemuan').value,
-            // Mengambil semua media yang dicentang lalu digabung koma
             media: Array.from(document.querySelectorAll('input[name="media_alat"]:checked'))
                    .map(cb => cb.value).join(", ") || "-",
             materi: document.getElementById('materi').value,
@@ -639,7 +631,6 @@
         .then(res => res.json())
         .then(response => {
             if(response.status == 'success') {
-                // --- GANTI ALERT SUKSES DISINI ---
                 Swal.fire({
                     title: 'Berhasil!',
                     text: 'Data jurnal Anda telah tersimpan.',
@@ -647,7 +638,7 @@
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Mantap!'
                 }).then((result) => {
-                    location.reload(); // Reload setelah tombol ditekan
+                    location.reload();
                 });
                 
             } else {
@@ -671,97 +662,92 @@
         });
     }
 
-    document.getElementById('buktiKBM').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onload = function(event) {
-        const img = new Image();
-        img.src = event.target.result;
-
-        img.onload = function() {
-            // 1. Tentukan ukuran maksimal lebar/tinggi foto (misal: 1024px)
-            const MAX_WIDTH = 1024;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > MAX_WIDTH) {
-                height = Math.round((height * MAX_WIDTH) / width);
-                width = MAX_WIDTH;
-            }
-
-            // 2. Gambar ulang foto di elemen Canvas internal
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            // 3. Konversi ke JPEG dengan kualitas 70% (0.7)
-            canvas.toBlob(function(blob) {
-                // Buat file baru hasil kompresi
-                const compressedFile = new File([blob], file.name, {
-                    type: 'image/jpeg',
-                    lastModified: Date.now()
-                });
-
-                // 4. Timpa file asli di dalam tag <input> dengan file yang sudah kecil
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(compressedFile);
-                document.getElementById('buktiKBM').files = dataTransfer.files;
-
-                console.log(`Foto berhasil dikompres! Ukuran baru: ${(blob.size / 1024).toFixed(1)} KB`);
-            }, 'image/jpeg', 0.7); // 0.7 = Kualitas 70%
-        };
-    };
-});
-
+    // 4. OTOMATIS SIMPAN EMAIL DI STORAGE
     document.addEventListener('DOMContentLoaded', function() {
-    const emailInput = document.getElementById('emailGuru');
-
-    // 1. Cek apakah ada email yang pernah tersimpan
-    const emailTersimpan = localStorage.getItem('emailGuruTersimpan');
-    if (emailTersimpan) {
-        emailInput.value = emailTersimpan; // Langsung isikan ke dalam kotak
-    }
-
-    // 2. Simpan email secara otomatis setiap kali guru mengetik/mengubah email
-    emailInput.addEventListener('input', function() {
-        localStorage.setItem('emailGuruTersimpan', this.value);
+        const emailInput = document.getElementById('emailGuru');
+        if (emailInput) {
+            const emailTersimpan = localStorage.getItem('emailGuruTersimpan');
+            if (emailTersimpan) {
+                emailInput.value = emailTersimpan;
+            }
+            emailInput.addEventListener('input', function() {
+                localStorage.setItem('emailGuruTersimpan', this.value);
+            });
+        }
     });
-});
 
+    // 5. FITUR KAMERA & GALERI + AUTO KOMPRES FOTO
     const inputKamera = document.getElementById('inputKamera');
-const inputGaleri = document.getElementById('inputGaleri');
-const buktiKBM = document.getElementById('buktiKBM');
-const namaFilePilihan = document.getElementById('namaFilePilihan');
+    const inputGaleri = document.getElementById('inputGaleri');
+    const buktiKBM = document.getElementById('buktiKBM');
+    const namaFilePilihan = document.getElementById('namaFilePilihan');
 
-// Fungsi untuk menangani file yang dipilih
-function tanganiFile(inputSumber) {
-    if (inputSumber.files && inputSumber.files[0]) {
-        // Salin file ke input utama (#buktiKBM)
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(inputSumber.files[0]);
-        buktiKBM.files = dataTransfer.files;
+    function prosesDanKompresFile(file) {
+        if (!file) return;
 
-        // Tampilkan nama file di layar
-        namaFilePilihan.innerText = '✔ Foto berhasil dipilih: ' + inputSumber.files[0].name;
-        namaFilePilihan.style.color = '#16a34a'; // Warna hijau
+        if(namaFilePilihan) {
+            namaFilePilihan.innerText = "⏳ Sedang mengompres foto...";
+            namaFilePilihan.style.color = "#0284c7";
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = function(event) {
+            const img = new Image();
+            img.src = event.target.result;
+
+            img.onload = function() {
+                const MAX_WIDTH = 1024;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > MAX_WIDTH) {
+                    height = Math.round((height * MAX_WIDTH) / width);
+                    width = MAX_WIDTH;
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(function(blob) {
+                    const compressedFile = new File([blob], file.name, {
+                        type: 'image/jpeg',
+                        lastModified: Date.now()
+                    });
+
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(compressedFile);
+                    buktiKBM.files = dataTransfer.files;
+
+                    const ukuranKB = (blob.size / 1024).toFixed(1);
+                    if(namaFilePilihan) {
+                        namaFilePilihan.innerText = `✔ Foto berhasil dipilih (${ukuranKB} KB)`;
+                        namaFilePilihan.style.color = "#16a34a";
+                    }
+                }, 'image/jpeg', 0.7);
+            };
+        };
     }
-}
 
-// Jalankan fungsi saat foto diambil via Kamera
-inputKamera.addEventListener('change', function() {
-    tanganiFile(this);
-});
+    if(inputKamera) {
+        inputKamera.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                prosesDanKompresFile(e.target.files[0]);
+            }
+        });
+    }
 
-// Jalankan fungsi saat foto dipilih dari Galeri
-inputGaleri.addEventListener('change', function() {
-    tanganiFile(this);
-});
+    if(inputGaleri) {
+        inputGaleri.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                prosesDanKompresFile(e.target.files[0]);
+            }
+        });
+    }
 </script>
 
 </body>
