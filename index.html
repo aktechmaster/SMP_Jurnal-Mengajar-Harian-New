@@ -307,13 +307,13 @@
     <form id="jurnalForm">
         
         <div class="input-group">
-            <label>Email Report</label>
-            <div class="input-wrapper">
-                <i class="fa-solid fa-paper-plane"></i>
-                <input type="email" id="emailGuru" class="form-control" placeholder="nama@sekolah.sch.id" required>
-            </div>
-            <small style="color: #94a3b8; font-size: 0.75rem; margin-top:5px; display:block;">*Bukti PDF akan dikirim ke email ini</small>
-        </div>
+    <label>Email Report</label>
+    <div class="input-wrapper">
+        <i class="fa-solid fa-paper-plane"></i>
+        <input type="email" id="emailGuru" class="form-control" placeholder="nama@sekolah.sch.id" autocomplete="email" required>
+    </div>
+    <small style="color: #94a3b8; font-size: 0.75rem; margin-top:5px; display:block;">*Bukti PDF akan dikirim ke email ini</small>
+</div>
 
         <div class="input-group">
             <label>Guru Pengampu</label>
@@ -694,6 +694,21 @@
             }, 'image/jpeg', 0.7); // 0.7 = Kualitas 70%
         };
     };
+});
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const emailInput = document.getElementById('emailGuru');
+
+    // 1. Cek apakah ada email yang pernah tersimpan
+    const emailTersimpan = localStorage.getItem('emailGuruTersimpan');
+    if (emailTersimpan) {
+        emailInput.value = emailTersimpan; // Langsung isikan ke dalam kotak
+    }
+
+    // 2. Simpan email secara otomatis setiap kali guru mengetik/mengubah email
+    emailInput.addEventListener('input', function() {
+        localStorage.setItem('emailGuruTersimpan', this.value);
+    });
 });
 </script>
 
