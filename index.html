@@ -418,13 +418,32 @@
         *Belum ada foto dipilih
     </small>
 </div>
-
         
         <div class="input-group">
-            <label>Catatan</label>
+            <label>Catatan Pengamatan</label>
             <input type="text" id="catatan" class="form-control" placeholder="-">
         </div>
 
+<!-- --- BAGIAN REFLEKSI PEMBELAJARAN --- -->
+<div style="margin-top: 25px; border-top: 2px dashed #e2e8f0; padding-top: 20px; margin-bottom: 10px;">
+    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 15px; margin-top: 0;">💡 REFLEKSI PEMBELAJARAN</h3>
+    
+    <div class="input-group">
+        <label>Keberhasilan</label>
+        <textarea id="keberhasilan" class="form-control" rows="2" placeholder="Contoh: Siswa sangat antusias dan aktif saat diskusi kelompok..."></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>Perbaikan</label>
+        <textarea id="perbaikan" class="form-control" rows="2" placeholder="Contoh: Manajemen waktu presentasi perlu diperbaiki agar tidak molor..."></textarea>
+    </div>
+
+    <div class="input-group">
+        <label>Rencana Tindak Lanjut</label>
+        <textarea id="rtl" class="form-control" rows="2" placeholder="Contoh: Menyiapkan timer interaktif untuk membatasi waktu tiap kelompok..."></textarea>
+    </div>
+</div>
+        
         <div style="margin-top: 30px; border-top: 2px dashed #e2e8f0; padding-top: 20px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <label style="margin:0; font-size:1rem; color:var(--primary);">PRESENSI SISWA</label>
@@ -596,6 +615,9 @@
                    .map(cb => cb.value).join(", ") || "-",
             materi: document.getElementById('materi').value,
             kegiatan: document.getElementById('kegiatan').value,
+            keberhasilan: document.getElementById('keberhasilan').value,
+            perbaikan: document.getElementById('perbaikan').value,
+            rtl: document.getElementById('rtl').value,
             catatan: document.getElementById('catatan').value,
             waktu: [],
             absensiData: []
