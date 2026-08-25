@@ -420,9 +420,12 @@
 </div>
         
         <div class="input-group">
-            <label>Catatan Pengamatan</label>
-            <input type="text" id="catatan" class="form-control" placeholder="-">
-        </div>
+    <label>Catatan Pengamatan</label>
+    <textarea id="catatan" class="form-control" rows="2" 
+        style="overflow: hidden; resize: none;" 
+        oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'" 
+        placeholder="Contoh: Siswa kelas 8A sangat aktif, namun ada kendala mati lampu sejenak saat jam ke-3..."></textarea>
+</div>
 
 <!-- --- BAGIAN REFLEKSI PEMBELAJARAN --- -->
 <div style="margin-top: 25px; border-top: 2px dashed #e2e8f0; padding-top: 20px; margin-bottom: 10px;">
