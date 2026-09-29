@@ -207,54 +207,66 @@ function kirimData() {
 }
 
 function kirimKeGoogle(payload, btn) {
-fetch(SCRIPT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(payload)
-})
-.then(async res => {
-    const rawText = await res.text();
-    try {
-        return JSON.parse(rawText);
-    } catch (e) {
-        throw new Error("Respon server bukan JSON: " + rawText.substring(0, 100));
-    }
-})
-.then(response => {
-    if(response.status === 'success') {
-        Swal.fire({
-            title: 'Berhasil!',
-            text: response.message || 'Data jurnal Anda telah tersimpan.',
-            icon: 'success',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Mantap!'
-        }).then(() => {
-            location.reload();
-        });
-    } else {
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+    })
+    .then(async res => {
+        const rawText = await res.text();
+        let response;
+        try {
+            response = JSON.parse(rawText);
+        } catch (e) {
+            // Jika respon bukan JSON, artinya GAS crash / error sistemik
+            console.error("Raw response:", rawText);
+            throw new Error("SERVER_ERROR_HTML");
+        }
+        return response;
+    })
+    .then(response => {
+        if (response.status === 'success' || response.status === 'SUKSES') {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: response.message || 'Data jurnal Anda telah tersimpan dengan sukses.',
+                icon: 'success',
+                confirmButtonColor: '#0284c7',
+                confirmButtonText: 'Mantap!'
+            }).then(() => {
+                location.reload();
+            });
+        } else {
+            // Backend secara sadar menolak/gagal menyimpan data
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal Disimpan!',
+                text: response.message || 'Data tidak dapat disimpan oleh sistem.',
+                confirmButtonColor: '#ef4444',
+                confirmButtonText: 'Periksa Kembali'
+            });
+            btn.innerHTML = 'UPLOAD DATA <i class="fa-solid fa-rocket"></i>';
+            btn.disabled = false;
+        }
+    })
+    .catch(err => {
+        console.error("Error Detail:", err);
+        
+        let msg = 'Terjadi kesalahan jaringan atau waktu tunggu habis.';
+        if (err.message === "SERVER_ERROR_HTML") {
+            msg = 'Server mengalami kendala saat memproses gambar/email. Harap hubungi Admin untuk memastikan data masuk sebelum menginput ulang.';
+        }
+
         Swal.fire({
             icon: 'error',
-            title: 'Gagal Terkirim!',
-            text: response.message || 'Data gagal disimpan ke server.',
+            title: 'Sistem Tidak Merespon',
+            text: msg,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: 'Coba Lagi'
+            confirmButtonText: 'Tutup'
         });
+        
         btn.innerHTML = 'UPLOAD DATA <i class="fa-solid fa-rocket"></i>';
         btn.disabled = false;
-    }
-})
-.catch(err => {
-    console.error(err);
-    Swal.fire({
-        icon: 'warning',
-        title: 'Koneksi Terlambat',
-        text: 'Terjadi keterlambatan respon dari server. Silakan klik tombol kirim sekali lagi untuk memastikan status data Anda.',
-        confirmButtonColor: '#f59e0b',
-        confirmButtonText: 'Coba Lagi'
     });
-    btn.innerHTML = 'UPLOAD DATA <i class="fa-solid fa-rocket"></i>';
-    btn.disabled = false;
-});
 }
 
 // 4. OTOMATIS SIMPAN EMAIL DI STORAGE
