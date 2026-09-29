@@ -139,6 +139,27 @@ function kirimData() {
     const emailVal = document.getElementById('emailGuru').value;
     if(!emailVal) { alert("Harap isi Email untuk pengiriman bukti!"); return; }
 
+    // --- MULAI: VALIDASI MINIMAL KARAKTER REFLEKSI ---
+    const minChar = 30; // Ubah angka ini sesuai kebutuhan Anda
+    const teksCatatan = document.getElementById('catatan').value.trim();
+    const teksKeberhasilan = document.getElementById('keberhasilan').value.trim();
+    const teksPerbaikan = document.getElementById('perbaikan').value.trim();
+    const teksRtl = document.getElementById('rtl').value.trim();
+
+    if (teksCatatan.length < minChar || teksKeberhasilan.length < minChar || 
+        teksPerbaikan.length < minChar || teksRtl.length < minChar) {
+        
+        Swal.fire({
+            icon: 'warning',
+            title: 'Isian Terlalu Singkat',
+            text: `Mohon isi bagian Catatan Pengamatan & Refleksi minimal ${minChar} karakter ya. Evaluasi yang detail sangat berarti untuk perbaikan mutu sekolah kita!`,
+            confirmButtonColor: '#f59e0b',
+            confirmButtonText: 'Baik, saya lengkapi'
+        });
+        return; // Hentikan proses pengiriman jika syarat tidak terpenuhi
+    }
+    // --- SELESAI: VALIDASI MINIMAL KARAKTER ---
+
     if(!confirm('Data sudah benar? Kirim sekarang?')) return;
 
     let btn = document.getElementById('btnKirim');
